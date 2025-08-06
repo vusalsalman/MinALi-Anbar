@@ -3,696 +3,2179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Otel Anbar Yönetim Sistemi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <title>Anbar Yönetim Sistemi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
-        :root {
-            --primary: #4361ee;
-            --secondary: #3a0ca3;
-            --success: #4cc9f0;
-            --danger: #f72585;
-            --info: #4895ef;
-            --warning: #f8961e;
-            --light: #f8f9fa;
-            --dark: #212529;
-        }
-        
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap');
+
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f5f7fa;
-            color: var(--dark);
-            line-height: 1.6;
-            padding: 20px;
+            font-family: 'Nunito', sans-serif;
+            color: #676767;
+            background-color: #1e1e1e;
         }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-        }
-        
-        h2 {
-            color: var(--secondary);
-            text-align: center;
-            margin-bottom: 25px;
-            font-weight: 500;
+
+        .app-container {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            min-height: 100vh;
         }
-        
-        .input-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-        
-        .input-group {
+
+        .sidebar {
+            width: 250px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
         }
-        
-        .input-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
+
+        .bg-card {
+            background-color: #171717;
         }
-        
-        label {
-            font-weight: 500;
-            color: var(--secondary);
-            min-width: 100px;
+
+        .bg-sidebar-card-top {
+            background-color: #353535;
         }
-        
-        input, select {
-            flex: 1;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: all 0.3s;
+
+        .sidebar-separator-top {
+            border-bottom: 1px solid #2e2e2e;
         }
-        
-        .select2-container--default .select2-selection--single {
-            height: 46px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+
+        .sidebar-separator-bottom {
+            border-top: 1px solid #2e2e2e;
         }
-        
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 46px;
+
+        .text-premium-yellow {
+            color: #f7b91c;
         }
-        
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 44px;
+
+        .text-green-400 {
+            color: #4ade80;
         }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+
+        .text-red-400 {
+            color: #f87171;
         }
-        
-        button {
+
+        .text-blue-400 {
+            color: #60a5fa;
+        }
+
+        .icon-background {
+            background: #2d2d2d;
+        }
+
+        .tooltip-head {
+            background: #1d1d1d;
+        }
+
+        .tooltip-body {
+            background: #252525;
+        }
+
+        .search-icon {
+            top: 50%;
+            transform: translateY(-50%);
+            position: absolute;
+            left: 12px;
+        }
+
+        .card-stack-border {
+            border-bottom: 2px solid #696969;
+        }
+
+        .bg-details {
+            background-color: #1e1e1e;
+        }
+
+        .add-component-head {
+            background-color: #181818;
+            background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+        }
+
+        .sidebar-item-selected {
+            color: white;
+            border-right: 2px solid white;
+            background-color: #2d2d2d;
+        }
+
+        .sidebar-item {
+            border-right: 2px solid transparent;
             padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
+            margin-bottom: 5px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            transition: all 0.3s;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
+            transition: all 0.3s ease;
         }
-        
-        .btn-add {
-            background-color: var(--success);
-            color: white;
+
+        .sidebar-item:hover {
+            color: #a1a0a0;
+            background-color: #2d2d2d;
         }
-        
-        .btn-remove {
-            background-color: var(--danger);
-            color: white;
-        }
-        
-        .btn-export {
-            background-color: var(--info);
-            color: white;
-        }
-        
-        .btn-new-category {
-            background-color: var(--warning);
-            color: white;
-        }
-        
-        button:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-        
-        .action-buttons {
+
+        .main-content {
+            flex: 1;
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            flex-direction: column;
         }
-        
-        h3 {
-            margin: 25px 0 15px;
-            color: var(--secondary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+
+        .top-navigation {
+            height: 70px;
         }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
         }
-        
-        th {
-            background-color: var(--secondary);
-            color: white;
-            padding: 12px;
-            text-align: left;
+
+        .tab-content {
+            display: none;
         }
-        
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
+
+        .tab-content.active {
+            display: block;
         }
-        
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        
-        tr:hover {
-            background-color: #e9ecef;
-        }
-        
-        .empty-stock {
-            text-align: center;
-            color: #6c757d;
-            padding: 20px;
-            font-style: italic;
-        }
-        
-        .category-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            background-color: #e2e8f0;
-            color: #4a5568;
-        }
-        
-        .low-stock {
-            color: #e53e3e;
-            font-weight: 500;
-        }
-        
+
         .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 1000;
+            align-items: center;
             justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #171717;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 28rem;
+        }
+
+        /* Chart container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        /* Utility Classes */
+        .flex {
+            display: flex;
+        }
+
+        .items-center {
             align-items: center;
         }
-        
-        .modal-content {
-            background-color: white;
-            padding: 25px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+        .justify-between {
+            justify-content: space-between;
         }
-        
-        .modal-title {
-            margin-bottom: 20px;
-            color: var(--secondary);
-        }
-        
-        .modal-actions {
-            display: flex;
+
+        .justify-end {
             justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
+        }
+
+        .mr-2 {
+            margin-right: 0.5rem;
+        }
+
+        .mr-3 {
+            margin-right: 0.75rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 0.75rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .p-6 {
+            padding: 1.5rem;
+        }
+
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .py-1 {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+
+        .px-3 {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .px-2 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+
+        .rounded-full {
+            border-radius: 9999px;
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        .text-gray-400 {
+            color: #9ca3af;
+        }
+
+        .text-black {
+            color: black;
+        }
+
+        .text-xl {
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+        }
+
+        .text-2xl {
+            font-size: 1.5rem;
+            line-height: 2rem;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+
+        .text-xs {
+            font-size: 0.75rem;
+            line-height: 1rem;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .max-w-md {
+            max-width: 28rem;
+        }
+
+        .h-10 {
+            height: 2.5rem;
+        }
+
+        .w-10 {
+            width: 2.5rem;
+        }
+
+        .h-12 {
+            height: 3rem;
+        }
+
+        .w-12 {
+            width: 3rem;
+        }
+
+        .grid {
+            display: grid;
+        }
+
+        .grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-cols-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .gap-6 {
+            gap: 1.5rem;
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        .absolute {
+            position: absolute;
+        }
+
+        .left-3 {
+            left: 0.75rem;
+        }
+
+        .block {
+            display: block;
+        }
+
+        .focus\:outline-none:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+
+        .focus\:ring-2:focus {
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+        }
+
+        .focus\:ring-premium-yellow:focus {
+            --tw-ring-color: #f7b91c;
+        }
+
+        .hover\:bg-yellow-500:hover {
+            background-color: #eab308;
+        }
+
+        .hover\:bg-gray-700:hover {
+            background-color: #374151;
+        }
+
+        .hover\:bg-green-600:hover {
+            background-color: #16a34a;
+        }
+
+        .hover\:bg-red-600:hover {
+            background-color: #dc2626;
+        }
+
+        .hover\:text-white:hover {
+            color: white;
+        }
+
+        .transition {
+            transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+
+        .overflow-x-auto {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        tr {
+            border-bottom: 1px solid #2e2e2e;
+        }
+
+        tr:last-child {
+            border-bottom: none;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        input, select, textarea {
+            background-color: #252525;
+            border: 1px solid #2e2e2e;
+            color: white;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            width: 100%;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #f7b91c;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #2e2e2e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+
+        /* İnventar cədvəli üçün əlavə stil */
+        #inventory-table td, #inventory-table th {
+            padding: 12px 16px;
+        }
+
+        #inventory-table tr:hover {
+            background-color: #2d2d2d;
+        }
+
+        /* Boş məlumat mesajı üçün stil */
+        .text-center {
+            text-align: center;
         }
         
-        @media (max-width: 768px) {
-            .input-section {
-                grid-template-columns: 1fr;
-            }
-            
-            .input-row {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            label {
-                margin-bottom: 5px;
-            }
+        /* No data message style */
+        .no-data {
+            padding: 20px;
+            text-align: center;
+            color: #9ca3af;
+            font-style: italic;
+        }
+        
+        /* Operation buttons */
+        .operation-btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .in-btn {
+            background-color: #4ade80;
+            color: white;
+        }
+        
+        .out-btn {
+            background-color: #f87171;
+            color: white;
+        }
+        
+        .operation-btn:hover {
+            opacity: 0.9;
+        }
+        #add-operation-btn
+        {
+            background-color: aliceblue !important;
+        }
+        #add-product-btn
+        {
+            background-color: aliceblue !important;
+        }
+        #add-category-btn
+        {
+            background-color: aliceblue !important;
+        }
+        .icon-background
+        {
+            justify-content: center;
+        }
+         .low-stock {
+            color: #ff6b6b !important;
+            font-weight: bold;
+        }
+        
+        .low-stock-row {
+            background-color: rgba(255, 107, 107, 0.1) !important;
+            border-left: 3px solid #ff6b6b;
+        }
+        
+        .menu-alert {
+            color: #ff6b6b !important;
+            animation: blink 1.5s infinite;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>🏨 Otel Anbar Yönetim Sistemi</h2>
-        
-        <div class="input-section">
-            <div class="input-group">
-                <div class="input-row">
-                    <label for="productCategory">Kategori:</label>
-                    <select id="productCategory" class="js-example-basic-single">
-                        <option value="">Kategori seçin</option>
-                        <option value="Temizlik">Temizlik</option>
-                        <option value="Mutfak">Mutfak</option>
-                        <option value="Banyo">Banyo</option>
-                        <option value="Oda Malzemeleri">Oda Malzemeleri</option>
-                        <option value="Teknik Malzemeler">Teknik Malzemeleri</option>
-                    </select>
-                </div>
-                
-                <div class="input-row">
-                    <label for="productName">Ürün Adı:</label>
-                    <select id="productName" class="js-example-basic-single">
-                        <option value="">Ürün seçin veya yazın</option>
-                        <option value="Şampuan">Şampuan</option>
-                        <option value="Sabun">Sabun</option>
-                        <option value="Havlu">Havlu</option>
-                        <option value="Yatak Çarşafı">Yatak Çarşafı</option>
-                        <option value="Bardak">Bardak</option>
-                    </select>
-                </div>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar bg-card">
+            <div class="sidebar-header bg-sidebar-card-top p-4">
+                <h1 class="text-xl font-bold text-white">Anbar Yönetim</h1>
+                <p class="text-sm text-gray-400">v1.0.0</p>
             </div>
-            
-            <div class="input-group">
-                <div class="input-row">
-                    <label for="quantity">Miktar:</label>
-                    <input type="number" id="quantity" placeholder="Adet" min="1">
-                </div>
-                
-                <div class="input-row">
-                    <label for="minStock">Min. Stok:</label>
-                    <input type="number" id="minStock" placeholder="Min. stok seviyesi" min="0">
+            <div class="sidebar-separator-top"></div>
+            <div class="sidebar-menu p-4">
+                <ul>
+                    <li class="sidebar-item sidebar-item-selected" data-tab="dashboard">
+                        <i class="fas fa-tachometer-alt mr-3"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li class="sidebar-item" data-tab="products">
+                        <i class="fas fa-boxes mr-3"></i>
+                        <span>Məhsullar</span>
+                    </li>
+                    <li class="sidebar-item" data-tab="categories">
+                        <i class="fas fa-tags mr-3"></i>
+                        <span>Kateqoriyalar</span>
+                    </li>
+                    <li class="sidebar-item" data-tab="operations">
+                        <i class="fas fa-exchange-alt mr-3"></i>
+                        <span>Daxilolma/Xaricolma</span>
+                    </li>
+                    <li class="sidebar-item" data-tab="reports">
+                        <i class="fas fa-chart-bar mr-3"></i>
+                        <span>Hesabatlar</span>
+                    </li>
+                    <li class="sidebar-item" data-tab="inventory">
+                        <i class="fas fa-clipboard-list mr-3"></i>
+                        <span>İnventar</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-separator-bottom"></div>
+            <div class="sidebar-footer p-4">
+                <div class="flex items-center">
+                    <div class="icon-background rounded-full w-10 h-10 flex items-center justify-center mr-3">
+                        <i class="fas fa-cog text-premium-yellow"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-white">Tənzimləmələr</p>
+                        <p class="text-xs text-gray-400">Sistem ayarları</p>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <div class="action-buttons">
-            <button class="btn-add" onclick="addStock()">
-                <span>➕</span> Stok Ekle
-            </button>
-            <button class="btn-remove" onclick="removeStock()">
-                <span>➖</span> Stok Çıkar
-            </button>
-            <button class="btn-new-category" onclick="openNewProductModal()">
-                <span>🆕</span> Yeni Ürün Ekle
-            </button>
-            <button class="btn-export" onclick="exportToExcel()">
-                <span>📊</span> Excel'e Aktar
-            </button>
-        </div>
-        
-        <h3>
-            <span>📋 Stok Listesi</span>
-            <div>
-                <select id="filterCategory" onchange="filterStock()" style="padding: 8px; border-radius: 5px;">
-                    <option value="">Tüm Kategoriler</option>
-                    <option value="Temizlik">Temizlik</option>
-                    <option value="Mutfak">Mutfak</option>
-                    <option value="Banyo">Banyo</option>
-                </select>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navigation -->
+            <div class="top-navigation bg-card p-4 flex justify-between items-center">
+                <div class="search-bar relative">
+                    <i class="fas fa-search search-icon text-gray-400"></i>
+                    <input type="text" placeholder="Axtar..." class="bg-details text-white rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-premium-yellow">
+                </div>
+                <div class="user-info flex items-center">
+                    <div class="mr-3 text-right">
+                        <p class="text-sm font-semibold text-white">Admin</p>
+                        <p class="text-xs text-gray-400">Yönetici</p>
+                    </div>
+                    <div class="icon-background rounded-full w-10 h-10 flex items-center justify-center">
+                        <i class="fas fa-user text-premium-yellow"></i>
+                    </div>
+                </div>
             </div>
-        </h3>
-        
-        <table id="stockTableForExport">
-            <thead>
-                <tr>
-                    <th>Kategori</th>
-                    <th>Ürün Adı</th>
-                    <th>Miktar</th>
-                    <th>Min. Stok</th>
-                    <th>Durum</th>
-                </tr>
-            </thead>
-            <tbody id="stockTable">
-                <!-- Stok verileri buraya eklenecek -->
-            </tbody>
-        </table>
-    </div>
-    
-    <!-- Yeni Ürün Ekleme Modalı -->
-    <div id="newProductModal" class="modal">
-        <div class="modal-content">
-            <h3 class="modal-title">Yeni Ürün Ekle</h3>
-            
-            <div class="input-row" style="margin-bottom: 15px;">
-                <label for="newCategory">Kategori:</label>
-                <select id="newCategory" style="flex: 1;">
-                    <option value="">Yeni kategori ekle</option>
-                    <option value="Temizlik">Temizlik</option>
-                    <option value="Mutfak">Mutfak</option>
-                    <option value="Banyo">Banyo</option>
-                </select>
-                <input type="text" id="customCategory" placeholder="Veya yeni kategori adı" style="flex: 1; display: none;">
-            </div>
-            
-            <div class="input-row" style="margin-bottom: 15px;">
-                <label for="newProductName">Ürün Adı:</label>
-                <input type="text" id="newProductName" placeholder="Ürün adı girin" style="flex: 1;">
-            </div>
-            
-            <div class="input-row" style="margin-bottom: 15px;">
-                <label for="defaultMinStock">Varsayılan Min. Stok:</label>
-                <input type="number" id="defaultMinStock" placeholder="Varsayılan min. stok" min="0" style="flex: 1;">
-            </div>
-            
-            <div class="modal-actions">
-                <button onclick="closeNewProductModal()" style="background: #ccc;">İptal</button>
-                <button onclick="saveNewProduct()" class="btn-add">Kaydet</button>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Dashboard Tab -->
+                <div id="dashboard-tab" class="tab-content active">
+                    <h2 class="text-2xl font-bold text-white mb-6">Dashboard</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-card p-6 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-gray-400">Ümumi Məhsul</p>
+                                    <h3 class="text-2xl font-bold text-white" id="total-products">0</h3>
+                                </div>
+                                <div class="icon-background rounded-full w-12 h-12 flex items-center justify-center">
+                                    <i class="fas fa-boxes text-premium-yellow text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-card p-6 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-gray-400">Kateqoriya</p>
+                                    <h3 class="text-2xl font-bold text-white" id="total-categories">0</h3>
+                                </div>
+                                <div class="icon-background rounded-full w-12 h-12 flex items-center justify-center">
+                                    <i class="fas fa-tags text-premium-yellow text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-card p-6 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-gray-400">Bugünkü Əməliyyat</p>
+                                    <h3 class="text-2xl font-bold text-white" id="today-operations">0</h3>
+                                </div>
+                                <div class="icon-background rounded-full w-12 h-12 flex items-center justify-center">
+                                    <i class="fas fa-exchange-alt text-premium-yellow text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg mb-6">
+                        <h3 class="text-xl font-bold text-white mb-4">Son Əməliyyatlar</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full" id="recent-operations-table">
+                                <thead>
+                                    <tr class="text-left text-gray-400 border-b border-gray-700">
+                                        <th class="pb-2">Məhsul</th>
+                                        <th class="pb-2">Kateqoriya</th>
+                                        <th class="pb-2">Növ</th>
+                                        <th class="pb-2">Miqdar</th>
+                                        <th class="pb-2">Tarix</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-white">
+                                    <!-- Recent operations will be added here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Tab -->
+                <div id="products-tab" class="tab-content">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-white">Məhsullar</h2>
+                        <button id="add-product-btn" class="bg-premium-yellow text-black py-2 px-4 rounded-lg font-semibold hover:bg-yellow-500 transition">
+                            <i class="fas fa-plus mr-2"></i>Yeni Məhsul
+                        </button>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg mb-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full" id="products-table">
+                                <thead>
+                                    <tr class="text-left text-gray-400 border-b border-gray-700">
+                                        <th class="pb-2">ID</th>
+                                        <th class="pb-2">Ad</th>
+                                        <th class="pb-2">Kateqoriya</th>
+                                        <th class="pb-2">Miqdar</th>
+                                        <th class="pb-2">Son Dəyişiklik</th>
+                                        <th class="pb-2">Əməliyyat</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-white">
+                                    <!-- Products will be added here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categories Tab -->
+                <div id="categories-tab" class="tab-content">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-white">Kateqoriyalar</h2>
+                        <button id="add-category-btn" class="bg-premium-yellow text-black py-2 px-4 rounded-lg font-semibold hover:bg-yellow-500 transition">
+                            <i class="fas fa-plus mr-2"></i>Yeni Kateqoriya
+                        </button>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg mb-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full" id="categories-table">
+                                <thead>
+                                    <tr class="text-left text-gray-400 border-b border-gray-700">
+                                        <th class="pb-2">ID</th>
+                                        <th class="pb-2">Ad</th>
+                                        <th class="pb-2">Məhsul Sayı</th>
+                                        <th class="pb-2">Əməliyyat</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-white">
+                                    <!-- Categories will be added here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Operations Tab -->
+                <div id="operations-tab" class="tab-content">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-white">Daxilolma/Xaricolma</h2>
+                        <div>
+                            <button id="export-operations-btn" class="bg-green-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition">
+                                <i class="fas fa-file-excel mr-2"></i>Export
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex items-center">
+                                <label for="operation-filter" class="text-gray-400 mr-2">Filtr:</label>
+                                <select id="operation-filter" class="bg-details text-white rounded-lg py-1 px-2 focus:outline-none focus:ring-2 focus:ring-premium-yellow">
+                                    <option value="all">Hamısı</option>
+                                    <option value="in">Daxilolma</option>
+                                    <option value="out">Xaricolma</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center">
+                                <label for="operation-date" class="text-gray-400 mr-2">Tarix:</label>
+                                <input type="date" id="operation-date" class="bg-details text-white rounded-lg py-1 px-2 focus:outline-none focus:ring-2 focus:ring-premium-yellow">
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full" id="operations-table">
+                                <thead>
+                                    <tr class="text-left text-gray-400 border-b border-gray-700">
+                                        <th class="pb-2">ID</th>
+                                        <th class="pb-2">Məhsul</th>
+                                        <th class="pb-2">Kateqoriya</th>
+                                        <th class="pb-2">Növ</th>
+                                        <th class="pb-2">Miqdar</th>
+                                        <th class="pb-2">Tarix</th>
+                                        <th class="pb-2">Qeyd</th>
+                                        <th class="pb-2">Əməliyyat</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-white">
+                                    <!-- Operations will be added here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div id="reports-tab" class="tab-content">
+                    <h2 class="text-2xl font-bold text-white mb-6">Hesabatlar</h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-card p-6 rounded-lg">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-bold text-white">Məhsul Hesabatı</h3>
+                                <button id="export-products-report" class="bg-green-500 text-white py-1 px-3 rounded-lg text-sm font-semibold hover:bg-green-600 transition">
+                                    <i class="fas fa-file-excel mr-1"></i>Export
+                                </button>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="products-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-card p-6 rounded-lg">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-bold text-white">Əməliyyat Hesabatı</h3>
+                                <button id="export-operations-report" class="bg-green-500 text-white py-1 px-3 rounded-lg text-sm font-semibold hover:bg-green-600 transition">
+                                    <i class="fas fa-file-excel mr-1"></i>Export
+                                </button>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="operations-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inventory Tab -->
+                <div id="inventory-tab" class="tab-content">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-white">Məhsul İnventarı</h2>
+                        <div>
+                            <button id="add-operation-btn" class="bg-premium-yellow text-black py-2 px-4 rounded-lg font-semibold hover:bg-yellow-500 transition mr-2">
+                                <i class="fas fa-plus mr-2"></i>Yeni Əməliyyat
+                            </button>
+                            <button id="export-inventory-btn" class="bg-green-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition">
+                                <i class="fas fa-file-excel mr-2"></i>Export
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg mb-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full" id="inventory-table">
+                                <thead>
+                                    <tr class="text-left text-gray-400 border-b border-gray-700">
+                                        <th class="pb-2">ID</th>
+                                        <th class="pb-2">Ad</th>
+                                        <th class="pb-2">Kateqoriya</th>
+                                        <th class="pb-2">Cari Miqdar</th>
+                                        <th class="pb-2">Ümumi Daxilolma</th>
+                                        <th class="pb-2">Ümumi Xaricolma</th>
+                                        <th class="pb-2">Əməliyyat</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-white">
+                                    <!-- Inventory data will be added here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- Modals -->
+    <!-- Add Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-white">Yeni Məhsul</h3>
+                <button id="close-product-modal" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="mb-4">
+                    <label for="product-name" class="block text-gray-400 mb-2">Məhsul Adı</label>
+                    <input type="text" id="product-name" class="w-full bg-details text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-premium-yellow" required>
+                </div>
+                <div class="mb-4">
+                    <label for="product-category" class="block text-gray-400 mb-2">Kateqoriya</label>
+                    <select id="product-category" class="w-full bg-details text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-premium-yellow" required>
+                        <!-- Categories will be added here -->
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="product-quantity" class="block text-gray-400 mb-2">İlkin Miqdar</label>
+                    <input type="number" id="product-quantity" class="w-full bg-details text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-premium-yellow" value="0" min="0" required>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" id="cancel-product" class="bg-gray-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-gray-700 transition mr-2">
+                        Ləğv et
+                    </button>
+                    <button type="submit" class="save bg-premium-yellow text-black py-2 px-4 rounded-lg font-semibold hover:bg-yellow-500 transition">
+                        Yadda Saxla
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div id="category-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-white">Yeni Kateqoriya</h3>
+                <button id="close-category-modal" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="category-form">
+                <input type="hidden" id="category-id">
+                <div class="mb-4">
+                    <label for="category-name" class="block text-gray-400 mb-2">Kateqoriya Adı</label>
+                    <input type="text" id="category-name" class="w-full bg-details text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-premium-yellow" required>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" id="cancel-category" class="bg-gray-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-gray-700 transition mr-2">
+                        Ləğv et
+                    </button>
+                    <button type="submit" class="bg-premium-yellow text-black py-2 px-4 rounded-lg font-semibold hover:bg-yellow-500 transition">
+                        Yadda Saxla
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Operation Modal -->
+    <div id="operation-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-white">Yeni Əməliyyat</h3>
+                <button id="close-operation-modal" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="operation-form">
+                <input type="hidden" id="operation-id">
+                <div class="mb-4">
+                    <label for="operation-product" class="block text-gray-400 mb-2">Məhsul</label>
+                    <select id="operation-product" class="w-full bg-details text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-premium-yellow" required>
+                        <!-- Products will be added here -->
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="operation-quantity" class="block text-gray-400 mb-2">Miqdar</label>
+                    <input type="number" id="operation-quantity" class="w-full bg-details text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-premium-yellow" value="1" min="1" required>
+                </div>
+                <div class="mb-4">
+                    <label for="operation-date" class="block text-gray-400 mb-2">Tarix</label>
+                    <input type="date" id="operation-date" class="w-full bg-details text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-premium-yellow" required>
+                </div>
+                <div class="mb-4">
+                    <label for="operation-note" class="block text-gray-400 mb-2">Qeyd</label>
+                    <textarea id="operation-note" class="w-full bg-details text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-premium-yellow" rows="3"></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" id="cancel-operation" class="bg-gray-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-gray-700 transition mr-2">
+                        Ləğv et
+                    </button>
+                    <button type="button" id="save-in-operation" class="operation-btn in-btn mr-2">
+                        <i class="fas fa-arrow-down mr-1"></i> Daxilolma
+                    </button>
+                    <button type="button" id="save-out-operation" class="operation-btn out-btn">
+                        <i class="fas fa-arrow-up mr-1"></i> Xaricolma
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-white" id="confirm-title">Təsdiq</h3>
+                <button id="close-confirm-modal" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <p class="text-white mb-6" id="confirm-message">Bu əməliyyatı təsdiq edirsiniz?</p>
+            <div class="flex justify-end">
+                <button type="button" id="cancel-confirm" class="bg-gray-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-gray-700 transition mr-2">
+                    Xeyr
+                </button>
+                <button type="button" id="confirm-action" class="bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition">
+                    Bəli
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Select2 ile arama yapılabilir dropdown'ları başlat
-        $(document).ready(function() {
-            $('.js-example-basic-single').select2({
-                tags: true,
-                placeholder: "Seçin veya yazın",
-                allowClear: true
-            });
-            
-            $('#productCategory').on('change', function() {
-                filterProductsByCategory();
-            });
-            
-            $('#newCategory').on('change', function() {
-                if(this.value === '') {
-                    $('#customCategory').show();
-                } else {
-                    $('#customCategory').hide();
-                }
-            });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the application
+            initApp();
         });
-        
-        // Stok veri yapısı
-        let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
-        let productCatalog = JSON.parse(localStorage.getItem('productCatalog')) || {
-            "Temizlik": ["Şampuan", "Sabun", "Diş Macunu", "Tuvalet Kağıdı"],
-            "Mutfak": ["Bardak", "Tabak", "Çatal", "Kaşık"],
-            "Banyo": ["Havlu", "Bornoz", "Terlik"],
-            "Oda Malzemeleri": ["Yastık", "Yatak Çarşafı", "Battaniye"]
-        };
-        
-        // Sayfa yüklendiğinde stokları yükle
-        window.onload = function() {
-            loadStock();
-            updateProductDropdowns();
-        };
-        
-        // Stok yükleme fonksiyonu
-        function loadStock() {
-            const table = document.getElementById('stockTable');
-            table.innerHTML = '';
+
+        function initApp() {
+            // Initialize data if not exists
+            initData();
             
-            if (Object.keys(stockData).length === 0) {
-                table.innerHTML = '<tr><td colspan="5" class="empty-stock">Stokta ürün bulunmamaktadır</td></tr>';
-                return;
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Load initial data
+            loadDashboard();
+            loadProducts();
+            loadCategories();
+            loadOperations();
+            loadInventory();
+            
+            // Set today's date as default for operation date filter
+            document.getElementById('operation-date').valueAsDate = new Date();
+        }
+
+        function initData() {
+            if (!localStorage.getItem('products')) {
+                localStorage.setItem('products', JSON.stringify([]));
             }
             
-            for (const category in stockData) {
-                for (const product in stockData[category]) {
-                    const item = stockData[category][product];
-                    const row = document.createElement('tr');
-                    
-                    const isLowStock = item.quantity <= item.minStock;
-                    
-                    row.innerHTML = `
-                        <td><span class="category-badge">${category}</span></td>
-                        <td>${product}</td>
-                        <td class="${isLowStock ? 'low-stock' : ''}">${item.quantity}</td>
-                        <td>${item.minStock || '-'}</td>
-                        <td>${isLowStock ? '⚠️ Düşük Stok' : '✅ Yeterli'}</td>
-                    `;
-                    table.appendChild(row);
-                }
+            if (!localStorage.getItem('categories')) {
+                // Add some default categories
+                const defaultCategories = [
+                    { id: 1, name: 'Elektronika' },
+                    { id: 2, name: 'Ofis' },
+                    { id: 3, name: 'Mexanika' }
+                ];
+                localStorage.setItem('categories', JSON.stringify(defaultCategories));
+            }
+            
+            if (!localStorage.getItem('operations')) {
+                localStorage.setItem('operations', JSON.stringify([]));
             }
         }
-        
-        // Stok ekleme fonksiyonu
-        function addStock() {
-            const category = document.getElementById('productCategory').value;
-            const product = document.getElementById('productName').value.trim();
-            const qty = parseInt(document.getElementById('quantity').value);
-            const minStock = parseInt(document.getElementById('minStock').value) || 0;
-            
-            if (!category || !product || !qty || qty <= 0) {
-                alert('Lütfen geçerli bir kategori, ürün adı ve miktar giriniz!');
-                return;
-            }
-            
-            // Stok verisini güncelle
-            if (!stockData[category]) {
-                stockData[category] = {};
-            }
-            
-            if (!stockData[category][product]) {
-                stockData[category][product] = {
-                    quantity: 0,
-                    minStock: minStock
-                };
-                
-                // Ürün kataloğuna ekle (eğer yoksa)
-                if (!productCatalog[category] || !productCatalog[category].includes(product)) {
-                    if (!productCatalog[category]) {
-                        productCatalog[category] = [];
+
+        function setupEventListeners() {
+            // Sidebar navigation
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove selected class from all items
+                    sidebarItems.forEach(i => {
+                        i.classList.remove('sidebar-item-selected');
+                    });
+                    
+                    // Add selected class to clicked item
+                    this.classList.add('sidebar-item-selected');
+                    
+                    // Show the corresponding tab
+                    const tabId = this.getAttribute('data-tab') + '-tab';
+                    document.querySelectorAll('.tab-content').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Load data for the tab if needed
+                    if (tabId === 'dashboard-tab') {
+                        loadDashboard();
+                    } else if (tabId === 'products-tab') {
+                        loadProducts();
+                    } else if (tabId === 'categories-tab') {
+                        loadCategories();
+                    } else if (tabId === 'operations-tab') {
+                        loadOperations();
+                    } else if (tabId === 'reports-tab') {
+                        loadReports();
+                    } else if (tabId === 'inventory-tab') {
+                        loadInventory();
                     }
-                    productCatalog[category].push(product);
-                    updateProductDropdowns();
-                }
-            }
+                });
+            });
+
+            // Product modal
+            document.getElementById('add-product-btn').addEventListener('click', () => {
+                openProductModal();
+            });
             
-            stockData[category][product].quantity += qty;
+            document.getElementById('close-product-modal').addEventListener('click', () => {
+                closeModal('product-modal');
+            });
             
-            // Min stock değerini güncelle (eğer verildiyse)
-            if (minStock > 0) {
-                stockData[category][product].minStock = minStock;
-            }
+            document.getElementById('cancel-product').addEventListener('click', () => {
+                closeModal('product-modal');
+            });
             
-            saveData();
-            loadStock();
-            clearInputs();
+            document.getElementById('product-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveProduct();
+            });
+            
+            // Category modal
+            document.getElementById('add-category-btn').addEventListener('click', () => {
+                openCategoryModal();
+            });
+            
+            document.getElementById('close-category-modal').addEventListener('click', () => {
+                closeModal('category-modal');
+            });
+            
+            document.getElementById('cancel-category').addEventListener('click', () => {
+                closeModal('category-modal');
+            });
+            
+            document.getElementById('category-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveCategory();
+            });
+            
+            // Operation modal
+            document.getElementById('add-operation-btn').addEventListener('click', () => {
+                openOperationModal();
+            });
+            
+            document.getElementById('close-operation-modal').addEventListener('click', () => {
+                closeModal('operation-modal');
+            });
+            
+            document.getElementById('cancel-operation').addEventListener('click', () => {
+                closeModal('operation-modal');
+            });
+            
+            document.getElementById('save-in-operation').addEventListener('click', () => {
+                saveOperation('in');
+            });
+            
+            document.getElementById('save-out-operation').addEventListener('click', () => {
+                saveOperation('out');
+            });
+            
+            // Confirmation modal
+            document.getElementById('close-confirm-modal').addEventListener('click', () => {
+                closeModal('confirm-modal');
+            });
+            
+            document.getElementById('cancel-confirm').addEventListener('click', () => {
+                closeModal('confirm-modal');
+            });
+            
+            // Export buttons
+            document.getElementById('export-operations-btn').addEventListener('click', () => {
+                exportOperationsToExcel();
+            });
+            
+            document.getElementById('export-products-report').addEventListener('click', () => {
+                exportProductsReport();
+            });
+            
+            document.getElementById('export-operations-report').addEventListener('click', () => {
+                exportOperationsReport();
+            });
+            
+            document.getElementById('export-inventory-btn').addEventListener('click', () => {
+                exportInventoryReport();
+            });
+            
+            // Filters
+            document.getElementById('operation-filter').addEventListener('change', () => {
+                loadOperations();
+            });
+            
+            document.getElementById('operation-date').addEventListener('change', () => {
+                loadOperations();
+            });
         }
-        
-        // Stok çıkarma fonksiyonu
-        function removeStock() {
-            const category = document.getElementById('productCategory').value;
-            const product = document.getElementById('productName').value.trim();
-            const qty = parseInt(document.getElementById('quantity').value);
-            
-            if (!category || !product || !qty || qty <= 0) {
-                alert('Lütfen geçerli bir kategori, ürün adı ve miktar giriniz!');
-                return;
-            }
-            
-            if (!stockData[category] || !stockData[category][product]) {
-                alert('Bu ürün stokta bulunmamaktadır!');
-                return;
-            }
-            
-            stockData[category][product].quantity -= qty;
-            
-            // Stok sıfır veya altına düşerse
-            if (stockData[category][product].quantity <= 0) {
-                delete stockData[category][product];
-                
-                // Kategori boşsa kategoriyi de sil
-                if (Object.keys(stockData[category]).length === 0) {
-                    delete stockData[category];
-                }
-            }
-            
-            saveData();
-            loadStock();
-            clearInputs();
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
         }
-        
-        // Excel'e aktarma fonksiyonu
-        function exportToExcel() {
-            if (Object.keys(stockData).length === 0) {
-                alert('Excel\'e aktarılacak veri bulunamadı!');
-                return;
-            }
-            
-            // Excel verisini hazırla
-            const data = [
-                ['Kategori', 'Ürün Adı', 'Miktar', 'Min. Stok', 'Durum'] // Başlık satırı
-            ];
-            
-            // Stok verilerini diziye ekle
-            for (const category in stockData) {
-                for (const product in stockData[category]) {
-                    const item = stockData[category][product];
-                    const isLowStock = item.quantity <= item.minStock;
-                    data.push([
-                        category,
-                        product,
-                        item.quantity,
-                        item.minStock || '-',
-                        isLowStock ? 'Düşük Stok' : 'Yeterli'
-                    ]);
-                }
-            }
-            
-            // Çalışma sayfası oluştur
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            
-            // Çalışma kitabı oluştur
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Stok Listesi");
-            
-            // Excel dosyasını indir
-            const date = new Date();
-            const fileName = `Otel_Stok_Listesi_${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}.xlsx`;
-            XLSX.writeFile(wb, fileName);
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
         }
-        
-        // Kategoriye göre ürünleri filtrele
-        function filterProductsByCategory() {
-            const category = $('#productCategory').val();
-            const $productSelect = $('#productName');
+
+        function openProductModal(product = null) {
+            const form = document.getElementById('product-form');
+            const categorySelect = document.getElementById('product-category');
             
-            $productSelect.empty();
-            $productSelect.append('<option value=""></option>');
+            // Clear the form
+            form.reset();
+            document.getElementById('product-id').value = '';
             
-            if (category && productCatalog[category]) {
-                productCatalog[category].forEach(product => {
-                    $productSelect.append(`<option value="${product}">${product}</option>`);
+            // Populate category dropdown
+            const categories = JSON.parse(localStorage.getItem('categories') || '[]');
+            categorySelect.innerHTML = '';
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                categorySelect.appendChild(option);
+            });
+            
+            // If editing a product, populate the form
+            if (product) {
+                document.getElementById('product-id').value = product.id;
+                document.getElementById('product-name').value = product.name;
+                document.getElementById('product-category').value = product.categoryId;
+                document.getElementById('product-quantity').value = product.quantity;
+            }
+            
+            openModal('product-modal');
+        }
+
+        function openCategoryModal(category = null) {
+            const form = document.getElementById('category-form');
+            
+            // Clear the form
+            form.reset();
+            document.getElementById('category-id').value = '';
+            
+            // If editing a category, populate the form
+            if (category) {
+                document.getElementById('category-id').value = category.id;
+                document.getElementById('category-name').value = category.name;
+            }
+            
+            openModal('category-modal');
+        }
+
+        function openOperationModal(operation = null) {
+            const form = document.getElementById('operation-form');
+            const productSelect = document.getElementById('operation-product');
+            
+            // Clear the form
+            form.reset();
+            document.getElementById('operation-id').value = '';
+            
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('operation-date').value = today;
+            
+            // Populate product dropdown
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            productSelect.innerHTML = '';
+            
+            if (products.length === 0) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'Məhsul yoxdur';
+                option.disabled = true;
+                option.selected = true;
+                productSelect.appendChild(option);
+            } else {
+                products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = product.name;
+                    productSelect.appendChild(option);
                 });
             }
             
-            $productSelect.select2({
-                tags: true,
-                placeholder: "Ürün seçin veya yazın",
-                allowClear: true
-            });
-        }
-        
-        // Stokları kategoriye göre filtrele
-        function filterStock() {
-            const category = document.getElementById('filterCategory').value;
-            const rows = document.getElementById('stockTable').getElementsByTagName('tr');
-            
-            for (let row of rows) {
-                if (row.cells.length > 0) {
-                    const rowCategory = row.cells[0].textContent.trim();
-                    if (!category || rowCategory === category) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                }
-            }
-        }
-        
-        // Yeni ürün modalını aç
-        function openNewProductModal() {
-            document.getElementById('newProductModal').style.display = 'flex';
-        }
-        
-        // Yeni ürün modalını kapat
-        function closeNewProductModal() {
-            document.getElementById('newProductModal').style.display = 'none';
-            document.getElementById('newProductName').value = '';
-            document.getElementById('defaultMinStock').value = '';
-            document.getElementById('newCategory').value = '';
-            document.getElementById('customCategory').value = '';
-            document.getElementById('customCategory').style.display = 'none';
-        }
-        
-        // Yeni ürün kaydet
-        function saveNewProduct() {
-            let category = document.getElementById('newCategory').value;
-            const customCategory = document.getElementById('customCategory').value.trim();
-            const productName = document.getElementById('newProductName').value.trim();
-            const minStock = parseInt(document.getElementById('defaultMinStock').value) || 0;
-            
-            if (category === '' && customCategory) {
-                category = customCategory;
+            // If editing an operation, populate the form
+            if (operation) {
+                document.getElementById('operation-id').value = operation.id;
+                document.getElementById('operation-product').value = operation.productId;
+                document.getElementById('operation-quantity').value = operation.quantity;
+                document.getElementById('operation-date').value = operation.date.split('T')[0];
+                document.getElementById('operation-note').value = operation.note || '';
             }
             
-            if (!category || !productName) {
-                alert('Lütfen kategori ve ürün adı giriniz!');
+            openModal('operation-modal');
+        }
+
+        function saveProduct() {
+            const id = document.getElementById('product-id').value;
+            const name = document.getElementById('product-name').value.trim();
+            const categoryId = parseInt(document.getElementById('product-category').value);
+            const quantity = parseInt(document.getElementById('product-quantity').value);
+            
+            if (!name || isNaN(categoryId)) {
+                alert('Zəhmət olmasa bütün məlumatları düzgün daxil edin!');
                 return;
             }
             
-            // Kataloğa ekle
-            if (!productCatalog[category]) {
-                productCatalog[category] = [];
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const categories = JSON.parse(localStorage.getItem('categories') || '[]');
+            
+            // Find category name
+            const category = categories.find(c => c.id === categoryId);
+            if (!category) {
+                alert('Kateqoriya tapılmadı!');
+                return;
             }
             
-            if (!productCatalog[category].includes(productName)) {
-                productCatalog[category].push(productName);
+            if (id) {
+                // Update existing product
+                const index = products.findIndex(p => p.id == id);
+                if (index !== -1) {
+                    products[index] = {
+                        id: parseInt(id),
+                        name,
+                        categoryId,
+                        categoryName: category.name,
+                        quantity
+                    };
+                }
+            } else {
+                // Add new product
+                const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+                products.push({
+                    id: newId,
+                    name,
+                    categoryId,
+                    categoryName: category.name,
+                    quantity
+                });
             }
             
-            // Dropdown'ları güncelle
-            updateProductDropdowns();
-            
-            // Modalı kapat ve inputları temizle
-            closeNewProductModal();
-            
-            // Kategori ve ürün seçimini yeni eklenene ayarla
-            $('#productCategory').val(category).trigger('change');
-            $('#productName').val(productName).trigger('change');
-            document.getElementById('minStock').value = minStock;
+            localStorage.setItem('products', JSON.stringify(products));
+            closeModal('product-modal');
+            loadProducts();
+            loadDashboard();
+            loadInventory();
         }
-        
-        // Ürün dropdown'larını güncelle
-        function updateProductDropdowns() {
-            localStorage.setItem('productCatalog', JSON.stringify(productCatalog));
+
+        function saveCategory() {
+            const id = document.getElementById('category-id').value;
+            const name = document.getElementById('category-name').value.trim();
             
-            // Kategori dropdown'ını güncelle
-            const $categorySelect = $('#productCategory');
-            const currentCategory = $categorySelect.val();
-            
-            $categorySelect.empty();
-            $categorySelect.append('<option value=""></option>');
-            
-            for (const category in productCatalog) {
-                $categorySelect.append(`<option value="${category}">${category}</option>`);
+            if (!name) {
+                alert('Zəhmət olmasa kateqoriya adını daxil edin!');
+                return;
             }
             
-            if (currentCategory) {
-                $categorySelect.val(currentCategory).trigger('change');
+            const categories = JSON.parse(localStorage.getItem('categories') || '[]');
+            
+            if (id) {
+                // Update existing category
+                const index = categories.findIndex(c => c.id == id);
+                if (index !== -1) {
+                    categories[index] = {
+                        id: parseInt(id),
+                        name
+                    };
+                    
+                    // Also update category name in products
+                    const products = JSON.parse(localStorage.getItem('products') || '[]');
+                    products.forEach(product => {
+                        if (product.categoryId == id) {
+                            product.categoryName = name;
+                        }
+                    });
+                    localStorage.setItem('products', JSON.stringify(products));
+                }
+            } else {
+                // Add new category
+                const newId = categories.length > 0 ? Math.max(...categories.map(c => c.id)) + 1 : 1;
+                categories.push({
+                    id: newId,
+                    name
+                });
             }
             
-            // Filtre dropdown'ını güncelle
-            const $filterSelect = $('#filterCategory');
-            $filterSelect.innerHTML = '<option value="">Tüm Kategoriler</option>';
+            localStorage.setItem('categories', JSON.stringify(categories));
+            closeModal('category-modal');
+            loadCategories();
+            loadDashboard();
+            loadProducts();
+            loadInventory();
+        }
+
+        function saveOperation(type) {
+            const id = document.getElementById('operation-id').value;
+            const productId = parseInt(document.getElementById('operation-product').value);
+            const quantity = parseInt(document.getElementById('operation-quantity').value);
+            const date = document.getElementById('operation-date').value;
+            const note = document.getElementById('operation-note').value.trim();
             
-            for (const category in productCatalog) {
-                $filterSelect.innerHTML += `<option value="${category}">${category}</option>`;
+            if (isNaN(productId)) {
+                alert('Zəhmət olmasa məhsul seçin!');
+                return;
+            }
+
+            if (isNaN(quantity) || quantity <= 0) {
+                alert('Zəhmət olmasa düzgün miqdar daxil edin!');
+                return;
+            }
+                        
+            const operations = JSON.parse(localStorage.getItem('operations') || '[]');
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            
+            // Find product
+            const product = products.find(p => p.id === productId);
+            if (!product) {
+                alert('Məhsul tapılmadı!');
+                return;
+            }
+
+            // Check for out operation if stock is sufficient
+            if (type === 'out' && product.quantity < quantity) {
+                alert('Kifayət qədər stok yoxdur!');
+                return;
+            }
+
+            if (id) {
+                // Update existing operation
+                const index = operations.findIndex(o => o.id == id);
+                if (index !== -1) {
+                    // First, reverse the old operation's effect on product quantity
+                    const oldOperation = operations[index];
+                    const oldProduct = products.find(p => p.id === oldOperation.productId);
+                    
+                    if (oldOperation.type === 'in') {
+                        oldProduct.quantity -= oldOperation.quantity;
+                    } else {
+                        oldProduct.quantity += oldOperation.quantity;
+                    }
+                    
+                    // Then update the operation
+                    operations[index] = {
+                        id: parseInt(id),
+                        type,
+                        productId,
+                        productName: product.name,
+                        categoryId: product.categoryId,
+                        categoryName: product.categoryName,
+                        quantity,
+                        date: new Date(date).toISOString(),
+                        note
+                    };
+                    
+                    // Apply the new operation's effect on product quantity
+                    if (type === 'in') {
+                        product.quantity += quantity;
+                    } else {
+                        product.quantity -= quantity;
+                    }
+                }
+            } else {
+                // Add new operation
+                const newId = operations.length > 0 ? Math.max(...operations.map(o => o.id)) + 1 : 1;
+                operations.push({
+                    id: newId,
+                    type,
+                    productId,
+                    productName: product.name,
+                    categoryId: product.categoryId,
+                    categoryName: product.categoryName,
+                    quantity,
+                    date: new Date(date).toISOString(),
+                    note
+                });
+                
+                // Update product quantity
+                if (type === 'in') {
+                    product.quantity += quantity;
+                } else {
+                    product.quantity -= quantity;
+                }
+            }
+            
+            localStorage.setItem('operations', JSON.stringify(operations));
+            localStorage.setItem('products', JSON.stringify(products));
+            closeModal('operation-modal');
+            loadOperations();
+            loadProducts();
+            loadDashboard();
+            loadInventory();
+        }
+
+        function loadDashboard() {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const categories = JSON.parse(localStorage.getItem('categories') || '[]');
+            const operations = JSON.parse(localStorage.getItem('operations') || '[]');
+            
+            // Update summary cards
+            document.getElementById('total-products').textContent = products.length;
+            document.getElementById('total-categories').textContent = categories.length;
+            
+            // Count today's operations
+            const today = new Date().toISOString().split('T')[0];
+            const todayOperations = operations.filter(o => {
+                return o.date.split('T')[0] === today;
+            }).length;
+            document.getElementById('today-operations').textContent = todayOperations;
+            
+            // Load recent operations
+            const recentOperationsTable = document.getElementById('recent-operations-table').querySelector('tbody');
+            recentOperationsTable.innerHTML = '';
+            
+            if (operations.length === 0) {
+                recentOperationsTable.innerHTML = '<tr><td colspan="5" class="no-data">Heç bir əməliyyat tapılmadı</td></tr>';
+                return;
+            }
+            
+            const recentOperations = [...operations]
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 5);
+            
+            recentOperations.forEach(operation => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${operation.productName}</td>
+                    <td>${operation.categoryName}</td>
+                    <td><span class="${operation.type === 'in' ? 'text-green-400' : 'text-red-400'}">${operation.type === 'in' ? 'Daxilolma' : 'Xaricolma'}</span></td>
+                    <td>${operation.quantity}</td>
+                    <td>${formatDate(operation.date)}</td>
+                `;
+                recentOperationsTable.appendChild(row);
+            });
+        }
+
+        function loadProducts() {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const productsTable = document.getElementById('products-table').querySelector('tbody');
+            productsTable.innerHTML = '';
+            
+            if (products.length === 0) {
+                productsTable.innerHTML = '<tr><td colspan="6" class="no-data">Heç bir məhsul tapılmadı</td></tr>';
+                return;
+            }
+            
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td>${product.name}</td>
+                    <td>${product.categoryName}</td>
+                    <td>${product.quantity}</td>
+                    <td>${formatDate(new Date().toISOString())}</td>
+                    <td>
+                        <button class="edit-product mr-2 text-blue-400 hover:text-blue-300" data-id="${product.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-product text-red-400 hover:text-red-300" data-id="${product.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                productsTable.appendChild(row);
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-product').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    const products = JSON.parse(localStorage.getItem('products') || '[]');
+                    const product = products.find(p => p.id === productId);
+                    if (product) {
+                        openProductModal(product);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.delete-product').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    showConfirmModal(
+                        'Məhsulu Sil',
+                        'Bu məhsulu silmək istədiyinizə əminsiniz?',
+                        () => {
+                            const products = JSON.parse(localStorage.getItem('products') || '[]');
+                            const updatedProducts = products.filter(p => p.id !== productId);
+                            localStorage.setItem('products', JSON.stringify(updatedProducts));
+                            
+                            // Also remove operations for this product
+                            const operations = JSON.parse(localStorage.getItem('operations') || '[]');
+                            const updatedOperations = operations.filter(o => o.productId !== productId);
+                            localStorage.setItem('operations', JSON.stringify(updatedOperations));
+                            
+                            loadProducts();
+                            loadOperations();
+                            loadDashboard();
+                            loadInventory();
+                        }
+                    );
+                });
+            });
+        }
+
+        function loadCategories() {
+            const categories = JSON.parse(localStorage.getItem('categories') || '[]');
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const categoriesTable = document.getElementById('categories-table').querySelector('tbody');
+            categoriesTable.innerHTML = '';
+            
+            if (categories.length === 0) {
+                categoriesTable.innerHTML = '<tr><td colspan="4" class="no-data">Heç bir kateqoriya tapılmadı</td></tr>';
+                return;
+            }
+            
+            categories.forEach(category => {
+                // Count products in this category
+                const productCount = products.filter(p => p.categoryId === category.id).length;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${category.id}</td>
+                    <td>${category.name}</td>
+                    <td>${productCount}</td>
+                    <td>
+                        <button class="edit-category mr-2 text-blue-400 hover:text-blue-300" data-id="${category.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-category text-red-400 hover:text-red-300" data-id="${category.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                categoriesTable.appendChild(row);
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-category').forEach(button => {
+                button.addEventListener('click', function() {
+                    const categoryId = parseInt(this.getAttribute('data-id'));
+                    const categories = JSON.parse(localStorage.getItem('categories') || '[]');
+                    const category = categories.find(c => c.id === categoryId);
+                    if (category) {
+                        openCategoryModal(category);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.delete-category').forEach(button => {
+                button.addEventListener('click', function() {
+                    const categoryId = parseInt(this.getAttribute('data-id'));
+                    const products = JSON.parse(localStorage.getItem('products') || '[]');
+                    const productsInCategory = products.filter(p => p.categoryId === categoryId);
+                    
+                    if (productsInCategory.length > 0) {
+                        alert('Bu kateqoriyada məhsullar var. Əvvəlcə bu məhsulları silin və ya başqa kateqoriyaya köçürün.');
+                        return;
+                    }
+                    
+                    showConfirmModal(
+                        'Kateqoriyanı Sil',
+                        'Bu kateqoriyanı silmək istədiyinizə əminsiniz?',
+                        () => {
+                            const categories = JSON.parse(localStorage.getItem('categories') || '[]');
+                            const updatedCategories = categories.filter(c => c.id !== categoryId);
+                            localStorage.setItem('categories', JSON.stringify(updatedCategories));
+                            loadCategories();
+                            loadDashboard();
+                        }
+                    );
+                });
+            });
+        }
+
+        function loadOperations() {
+            const operations = JSON.parse(localStorage.getItem('operations') || '[]');
+            const filterType = document.getElementById('operation-filter').value;
+            const filterDate = document.getElementById('operation-date').value;
+            
+            let filteredOperations = [...operations];
+            
+            // Apply type filter
+            if (filterType !== 'all') {
+                filteredOperations = filteredOperations.filter(o => o.type === filterType);
+            }
+            
+            // Apply date filter if set
+            if (filterDate) {
+                const selectedDate = new Date(filterDate).toISOString().split('T')[0];
+                filteredOperations = filteredOperations.filter(o => {
+                    return o.date.split('T')[0] === selectedDate;
+                });
+            }
+            
+            // Sort by date (newest first)
+            filteredOperations.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            const operationsTable = document.getElementById('operations-table').querySelector('tbody');
+            operationsTable.innerHTML = '';
+            
+            if (filteredOperations.length === 0) {
+                operationsTable.innerHTML = '<tr><td colspan="8" class="no-data">Heç bir əməliyyat tapılmadı</td></tr>';
+                return;
+            }
+            
+            filteredOperations.forEach(operation => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${operation.id}</td>
+                    <td>${operation.productName}</td>
+                    <td>${operation.categoryName}</td>
+                    <td><span class="${operation.type === 'in' ? 'text-green-400' : 'text-red-400'}">${operation.type === 'in' ? 'Daxilolma' : 'Xaricolma'}</span></td>
+                    <td>${operation.quantity}</td>
+                    <td>${formatDate(operation.date)}</td>
+                    <td>${operation.note || '-'}</td>
+                    <td>
+                        <button class="edit-operation mr-2 text-blue-400 hover:text-blue-300" data-id="${operation.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-operation text-red-400 hover:text-red-300" data-id="${operation.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                operationsTable.appendChild(row);
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-operation').forEach(button => {
+                button.addEventListener('click', function() {
+                    const operationId = parseInt(this.getAttribute('data-id'));
+                    const operations = JSON.parse(localStorage.getItem('operations') || '[]');
+                    const operation = operations.find(o => o.id === operationId);
+                    if (operation) {
+                        openOperationModal(operation);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.delete-operation').forEach(button => {
+                button.addEventListener('click', function() {
+                    const operationId = parseInt(this.getAttribute('data-id'));
+                    showConfirmModal(
+                        'Əməliyyatı Sil',
+                        'Bu əməliyyatı silmək istədiyinizə əminsiniz?',
+                        () => {
+                            const operations = JSON.parse(localStorage.getItem('operations') || '[]');
+                            const operation = operations.find(o => o.id === operationId);
+                            
+                            if (operation) {
+                                // First, reverse the operation's effect on product quantity
+                                const products = JSON.parse(localStorage.getItem('products') || '[]');
+                                const product = products.find(p => p.id === operation.productId);
+                                
+                                if (operation.type === 'in') {
+                                    product.quantity -= operation.quantity;
+                                } else {
+                                    product.quantity += operation.quantity;
+                                }
+                                
+                                localStorage.setItem('products', JSON.stringify(products));
+                                
+                                // Then remove the operation
+                                const updatedOperations = operations.filter(o => o.id !== operationId);
+                                localStorage.setItem('operations', JSON.stringify(updatedOperations));
+                                
+                                loadOperations();
+                                loadProducts();
+                                loadDashboard();
+                                loadInventory();
+                            }
+                        }
+                    );
+                });
+            });
+        }
+
+        function loadReports() {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const operations = JSON.parse(localStorage.getItem('operations') || '[]');
+            const categories = JSON.parse(localStorage.getItem('categories') || '[]');
+            
+            // Products by category chart
+            const productsCtx = document.getElementById('products-chart').getContext('2d');
+            
+            // Group products by category
+            const productsByCategory = {};
+            categories.forEach(category => {
+                productsByCategory[category.name] = 0;
+            });
+            
+            products.forEach(product => {
+                const category = categories.find(c => c.id === product.categoryId);
+                if (category) {
+                    productsByCategory[category.name] += 1;
+                }
+            });
+            
+            // Filter out categories with 0 products
+            const filteredProductsData = Object.entries(productsByCategory).filter(([_, count]) => count > 0);
+            
+            if (window.productsChart) {
+                window.productsChart.destroy();
+            }
+            
+            if (filteredProductsData.length > 0) {
+                window.productsChart = new Chart(productsCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: filteredProductsData.map(([name, _]) => name),
+                        datasets: [{
+                            data: filteredProductsData.map(([_, count]) => count),
+                            backgroundColor: [
+                                '#f7b91c',
+                                '#36a2eb',
+                                '#ff6384',
+                                '#4bc0c0',
+                                '#9966ff',
+                                '#ff9f40'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    color: '#fff'
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                document.getElementById('products-chart').innerHTML = '<p class="no-data">Məhsul məlumatı yoxdur</p>';
+            }
+            
+            // Operations chart
+            const operationsCtx = document.getElementById('operations-chart').getContext('2d');
+            
+            // Group operations by type for last 7 days
+            const last7Days = [...Array(7)].map((_, i) => {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                return d.toISOString().split('T')[0];
+            }).reverse();
+            
+            const operationsByDay = {};
+            last7Days.forEach(day => {
+                operationsByDay[day] = {
+                    in: 0,
+                    out: 0
+                };
+            });
+            
+            operations.forEach(operation => {
+                const date = operation.date.split('T')[0];
+                if (operationsByDay[date]) {
+                    operationsByDay[date][operation.type] += operation.quantity;
+                }
+            });
+            
+            if (window.operationsChart) {
+                window.operationsChart.destroy();
+            }
+            
+            if (operations.length > 0) {
+                window.operationsChart = new Chart(operationsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: last7Days.map(date => formatDate(date)),
+                        datasets: [
+                            {
+                                label: 'Daxilolma',
+                                data: last7Days.map(date => operationsByDay[date].in),
+                                backgroundColor: '#4bc0c0'
+                            },
+                            {
+                                label: 'Xaricolma',
+                                data: last7Days.map(date => operationsByDay[date].out),
+                                backgroundColor: '#ff6384'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                stacked: false,
+                                ticks: {
+                                    color: '#fff'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            },
+                            y: {
+                                stacked: false,
+                                ticks: {
+                                    color: '#fff'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#fff'
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                document.getElementById('operations-chart').innerHTML = '<p class="no-data">Əməliyyat məlumatı yoxdur</p>';
             }
         }
-        
-        // Verileri kaydet
-        function saveData() {
-            localStorage.setItem('stockData', JSON.stringify(stockData));
+
+        function loadInventory() {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const operations = JSON.parse(localStorage.getItem('operations') || '[]');
+            
+            const inventoryTable = document.getElementById('inventory-table').querySelector('tbody');
+            inventoryTable.innerHTML = '';
+            
+            if (products.length === 0) {
+                inventoryTable.innerHTML = '<tr><td colspan="7" class="no-data">Heç bir məhsul tapılmadı</td></tr>';
+                return;
+            }
+            
+            let hasLowStock = false;
+            
+            products.forEach(product => {
+                // Calculate total in/out quantities
+                const productOperations = operations.filter(o => o.productId === product.id);
+                const totalIn = productOperations
+                    .filter(o => o.type === 'in')
+                    .reduce((sum, o) => sum + o.quantity, 0);
+                
+                const totalOut = productOperations
+                    .filter(o => o.type === 'out')
+                    .reduce((sum, o) => sum + o.quantity, 0);
+                
+                const row = document.createElement('tr');
+                
+                // Check for low stock conditions
+                const isLowStock = (
+                    (product.name.toLowerCase().includes('şampun') && product.quantity < 100) ||
+                    (product.name.toLowerCase().includes('sabun') && product.quantity < 100) ||
+                     (product.name.toLowerCase().includes('gel') && product.quantity < 100) ||
+                    (product.name.toLowerCase().includes('diş fırçası') && product.quantity < 30)
+                );
+                
+                if (isLowStock) {
+                    hasLowStock = true;
+                    row.classList.add('low-stock-row');
+                }
+                
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td class="${isLowStock ? 'low-stock' : ''}">${product.name}</td>
+                    <td>${product.categoryName}</td>
+                    <td class="${isLowStock ? 'low-stock' : ''}">${product.quantity}</td>
+                    <td>${totalIn}</td>
+                    <td>${totalOut}</td>
+                    <td>
+                        <button class="add-operation-btn bg-blue-500 text-white py-1 px-3 rounded text-sm hover:bg-blue-600 transition" data-id="${product.id}">
+                            <i class="fas fa-plus mr-1"></i> Əməliyyat
+                        </button>
+                    </td>
+                `;
+                inventoryTable.appendChild(row);
+            });
+            
+            // Update menu item color if low stock exists
+            const inventoryMenuItem = document.querySelector('.sidebar-item[data-tab="inventory"]');
+            if (hasLowStock) {
+                inventoryMenuItem.classList.add('menu-alert');
+            } else {
+                inventoryMenuItem.classList.remove('menu-alert');
+            }
+            
+            // Add event listeners to add operation buttons
+            document.querySelectorAll('.add-operation-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    const products = JSON.parse(localStorage.getItem('products') || '[]');
+                    const product = products.find(p => p.id === productId);
+                    
+                    if (product) {
+                        openOperationModal();
+                        document.getElementById('operation-product').value = product.id;
+                    }
+                });
+            });
         }
-        
-        // Inputları temizle
-        function clearInputs() {
-            document.getElementById('quantity').value = '';
-            document.getElementById('minStock').value = '';
+
+        function checkStockLevels() {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            let hasLowStock = false;
+            
+            products.forEach(product => {
+                if (
+                    (product.name.toLowerCase().includes('şampun') && product.quantity < 100) ||
+                    (product.name.toLowerCase().includes('sabun') && product.quantity < 100) ||
+                    (product.name.toLowerCase().includes('diş fırçası') && product.quantity < 30)||
+                    (product.name.toLowerCase().includes('gel') && product.quantity < 100)
+                ) {
+                    hasLowStock = true;
+                }
+            });
+            
+            // Update menu item color if low stock exists
+            const inventoryMenuItem = document.querySelector('.sidebar-item[data-tab="inventory"]');
+            if (hasLowStock) {
+                inventoryMenuItem.classList.add('menu-alert');
+            } else {
+                inventoryMenuItem.classList.remove('menu-alert');
+            }
+            
+            // Also update inventory table if it's currently visible
+            if (document.getElementById('inventory-tab').classList.contains('active')) {
+                loadInventory();
+            }
         }
+        function showConfirmModal(title, message, confirmCallback) {
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            
+            const confirmButton = document.getElementById('confirm-action');
+            
+            // Remove previous event listeners
+            const newConfirmButton = confirmButton.cloneNode(true);
+            confirmButton.parentNode.replaceChild(newConfirmButton, confirmButton);
+            
+            newConfirmButton.addEventListener('click', () => {
+                confirmCallback();
+                closeModal('confirm-modal');
+            });
+            
+            openModal('confirm-modal');
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('tr-TR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
+
+        function exportOperationsToExcel() {
+            const operations = JSON.parse(localStorage.getItem('operations') || '[]');
+            
+            if (operations.length === 0) {
+                alert('Export üçün heç bir əməliyyat tapılmadı!');
+                return;
+            }
+            
+            // Prepare data for Excel
+            const data = [
+                ['ID', 'Məhsul', 'Kateqoriya', 'Növ', 'Miqdar', 'Tarix', 'Qeyd']
+            ];
+            
+            operations.forEach(operation => {
+                data.push([
+                    operation.id,
+                    operation.productName,
+                    operation.categoryName,
+                    operation.type === 'in' ? 'Daxilolma' : 'Xaricolma',
+                    operation.quantity,
+                    formatDate(operation.date),
+                    operation.note || ''
+                ]);
+            });
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, 'Əməliyyatlar');
+            
+            // Export to Excel
+            const fileName = `emeliyyatlar_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+        }
+
+        function exportProductsReport() {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            
+            if (products.length === 0) {
+                alert('Export üçün heç bir məhsul tapılmadı!');
+                return;
+            }
+            
+            // Prepare data for Excel
+            const data = [
+                ['ID', 'Ad', 'Kateqoriya', 'Miqdar']
+            ];
+            
+            products.forEach(product => {
+                data.push([
+                    product.id,
+                    product.name,
+                    product.categoryName,
+                    product.quantity
+                ]);
+            });
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, 'Məhsullar');
+            
+            // Export to Excel
+            const fileName = `mehsullar_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+        }
+
+        function exportOperationsReport() {
+            const operations = JSON.parse(localStorage.getItem('operations') || '[]');
+            
+            if (operations.length === 0) {
+                alert('Export üçün heç bir əməliyyat tapılmadı!');
+                return;
+            }
+            
+            // Group operations by product and type
+            const reportData = {};
+            
+            operations.forEach(operation => {
+                const key = `${operation.productId}_${operation.type}`;
+                if (!reportData[key]) {
+                    reportData[key] = {
+                        productName: operation.productName,
+                        categoryName: operation.categoryName,
+                        type: operation.type === 'in' ? 'Daxilolma' : 'Xaricolma',
+                        totalQuantity: 0
+                    };
+                }
+                reportData[key].totalQuantity += operation.quantity;
+            });
+            
+            // Prepare data for Excel
+            const data = [
+                ['Məhsul', 'Kateqoriya', 'Növ', 'Ümumi Miqdar']
+            ];
+            
+            Object.values(reportData).forEach(item => {
+                data.push([
+                    item.productName,
+                    item.categoryName,
+                    item.type,
+                    item.totalQuantity
+                ]);
+            });
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, 'Əməliyyat Hesabatı');
+            
+            // Export to Excel
+            const fileName = `emeliyyat_hesabati_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+        }
+
+        function exportInventoryReport() {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const operations = JSON.parse(localStorage.getItem('operations') || '[]');
+            
+            if (products.length === 0) {
+                alert('Export üçün heç bir məhsul tapılmadı!');
+                return;
+            }
+            
+            // Prepare data for Excel
+            const data = [
+                ['ID', 'Ad', 'Kateqoriya', 'Cari Miqdar', 'Ümumi Daxilolma', 'Ümumi Xaricolma']
+            ];
+            
+            products.forEach(product => {
+                const productOperations = operations.filter(o => o.productId === product.id);
+                const totalIn = productOperations
+                    .filter(o => o.type === 'in')
+                    .reduce((sum, o) => sum + o.quantity, 0);
+                
+                const totalOut = productOperations
+                    .filter(o => o.type === 'out')
+                    .reduce((sum, o) => sum + o.quantity, 0);
+                
+                data.push([
+                    product.id,
+                    product.name,
+                    product.categoryName,
+                    product.quantity,
+                    totalIn,
+                    totalOut
+                ]);
+            });
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, 'İnventar Hesabatı');
+            
+            // Export to Excel
+            const fileName = `inventar_hesabati_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+        }
+
+        // Məlumatı bütün cihazlarda saxla (Google hesabı ilə sinxron olunur)
+chrome.storage.sync.set({ key: "dəyər" });
+
+// Məlumatı oxu (hər hansı sinxron cihazda işləyəcək)
+chrome.storage.sync.get(["key"], (result) => {
+  console.log(result.key); // "dəyər" çap olunacaq
+});
     </script>
 </body>
 </html>
