@@ -2176,6 +2176,50 @@ chrome.storage.sync.set({ key: "dəyər" });
 chrome.storage.sync.get(["key"], (result) => {
   console.log(result.key); // "dəyər" çap olunacaq
 });
+
+        // Save data to localStorage
+function saveDataLocally(data) {
+  localStorage.setItem('inventoryData', JSON.stringify(data));
+}
+
+// If user is authenticated, sync with server
+function syncWithServer(userId) {
+  const localData = localStorage.getItem('inventoryData');
+  
+  if (userId && localData) {
+    // Send to your backend server
+    fetch('/api/sync-data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId,
+        data: localData
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Sync successful:', data);
+    });
+  }
+}
+
+// On other devices, check for updates
+function checkForUpdates(userId) {
+  if (userId) {
+    fetch(`/api/get-data?userId=${userId}`)
+      .then(response => response.json())
+      .then(data => {
+        localStorage.setItem('inventoryData', JSON.stringify(data));
+        // Refresh the UI
+        loadDashboard();
+        loadProducts();
+        // etc...
+      });
+  }
+}
     </script>
 </body>
 </html>
+
